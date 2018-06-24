@@ -20,5 +20,5 @@ $ php bin/psde-server.php
 Runs on port 1029 by default  
   
 ## Configuring apache2 for proxypass  
-WIP  
+ProxyPass /nickInThighHighSocks/ ws://127.0.0.1:1029/  
   
