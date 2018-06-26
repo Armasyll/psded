@@ -34,7 +34,7 @@ class MessageRouter {
                 );
                 break;
             }
-            case "P_PUBLIC_CHAT_MESSAGE" : {
+            case "P_CHAT_MESSAGE" : {
                 echo sprintf("MessageRouter::incoming :     P_PUBLIC_CHAT_MESSAGE with `" . json_encode($event["request"]["content"], true) . "`\n");
                 return array(
                     "respondTo"=>"all",
@@ -51,7 +51,7 @@ class MessageRouter {
                 break;
             }
             case "P_INIT_SELF" : {
-                echo sprintf("MessageRouter::incoming :     P_INIT_PLAYER with `" . json_encode($event["request"]["content"], true) . "`\n");
+                echo sprintf("MessageRouter::incoming :     P_INIT_SELF with `" . json_encode($event["request"]["content"], true) . "`\n");
                 $player = new Player(
                     $event["request"]["content"]["id"],
                     $event["client"]->resourceId,

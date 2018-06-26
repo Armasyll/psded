@@ -41,13 +41,13 @@ class MessageListener implements MessageComponentInterface {
     }
 
     public function onMessage(ConnectionInterface $conn, $msg = "") {
-        echo sprintf("\nMessageListener::onMessage : Connection %d (%s) sending message `%s`\n", $conn->resourceId, Server::getUUIDByClientID($conn->resourceId), $msg);
+        //echo sprintf("\nMessageListener::onMessage : Connection %d (%s) sending message `%s`\n", $conn->resourceId, Server::getUUIDByClientID($conn->resourceId), $msg);
         $msg = (array) json_decode(html_entity_decode($msg), true);
         if (!isset($msg["type"])) {
             echo sprintf("MessageListener::onMessage :     Client %d attempt to send an invalid message.\n", $conn->resourceId);
             return null;
         }
-        echo sprintf("MessageListener::onMessage :     Client %d sent `%s` with a request type of `%s`\n", $conn->resourceId, json_encode($msg["content"], true), $msg["type"]);
+        //echo sprintf("MessageListener::onMessage :     Client %d sent `%s` with a request type of `%s`\n", $conn->resourceId, json_encode($msg["content"], true), $msg["type"]);
         $response = MessageRouter::incoming(array("client"=>$conn,"request"=>$msg));
         if ($response == null) {
             return null;
