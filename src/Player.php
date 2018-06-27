@@ -14,7 +14,6 @@ class Player {
     private $moveForward = false;
     private $moveBackward = false;
     private $runForward = false;
-    private $runBackward = false;
     private $strafeRight = false;
     private $strafeLeft = false;
     private $turnRight = false;
@@ -103,11 +102,10 @@ class Player {
 	public function getScaling() {
 		return $this->scaling;
 	}
-	public function setMovementStatus($moveForward, $moveBackward, $runForward, $runBackward, $strafeRight, $strafeLeft, $turnRight, $turnLeft, $jump) {
+	public function setMovementStatus($moveForward, $moveBackward, $runForward, $strafeRight, $strafeLeft, $turnRight, $turnLeft, $jump) {
 		$this->moveForward = $moveForward;
 		$this->moveBackward = $moveBackward;
 		$this->runForward = $runForward;
-		$this->runBackward = $runBackward;
 		$this->strafeRight = $strafeRight;
 		$this->strafeLeft = $strafeLeft;
 		$this->turnRight = $turnRight;
@@ -122,7 +120,6 @@ class Player {
 			$this->moveForward,
 			$this->moveBackward,
 			$this->runForward,
-			$this->runBackward,
 			$this->strafeRight,
 			$this->strafeLeft,
 			$this->turnRight,
@@ -139,7 +136,6 @@ class Player {
 			$this->moveForward,
 			$this->moveBackward,
 			$this->runForward,
-			$this->runBackward,
 			$this->strafeRight,
 			$this->strafeLeft,
 			$this->turnRight,
@@ -159,7 +155,6 @@ class Player {
 			$this->moveForward,
 			$this->moveBackward,
 			$this->runForward,
-			$this->runBackward,
 			$this->strafeRight,
 			$this->strafeLeft,
 			$this->turnRight,
