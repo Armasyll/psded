@@ -60,33 +60,48 @@ class MessageRouter {
                     $event["request"]["content"]["rotation"],
                     $event["request"]["content"]["scaling"]
                 );
-                $player->setMovementKeys($event["request"]["content"]["movementKeys"]);
-                Server::setClientPlayer($event["client"], $player);
-                Server::$positionsChanged = true;
-                return array(
-                    "respondTo"=>"sender",
-                    "response"=>array(
-                        "type"=>"S_ACCEPT_INIT_SELF",
-                        "content"=>$player
-                    )
-                );
+                if ($player instanceof Player) {
+                    $player->setMovementKeys($event["request"]["content"]["movementKeys"]);
+                    Server::setClientPlayer($event["client"], $player);
+                    Server::$positionsChanged = true;
+                    return array(
+                        "respondTo"=>"sender",
+                        "response"=>array(
+                            "type"=>"S_ACCEPT_INIT_SELF",
+                            "content"=>$player
+                        )
+                    );
+                }
+                return null;
                 break;
             }
             case "P_UPDATE_LOCROTSCALE_SELF" : {
                 //echo sprintf("MessageRouter::incoming :     P_UPDATE_PLAYER_LOCROT with `" . json_encode($event["request"]["content"], true) . "`\n");
                 $player = Server::getPlayerByID($event["client"]->resourceId);
-                $player->setPosition($event["request"]["content"][0]);
-                $player->setRotation($event["request"]["content"][1]);
-                $player->setScaling($event["request"]["content"][2]);
-                $player->setMovementKeys($event["request"]["content"][3]);
-                Server::$positionsChanged = true;
+                if ($player instanceof Player) {
+                    $player->setPosition($event["request"]["content"][0]);
+                    $player->setRotation($event["request"]["content"][1]);
+                    $player->setScaling($event["request"]["content"][2]);
+                    $player->setMovementKeys($event["request"]["content"][3]);
+                    Server::$positionsChanged = true;
+                }
+                return null;
+                break;
+            }
+            case "P_UPDATE_MOVEMENTKEYS_SELF" : {
+                //echo sprintf("MessageRouter::incoming :     P_UPDATE_MOVEMENTKEYS_SELF with `" . json_encode($event["request"]["content"], true) . "`\n");
+                $player = Server::getPlayerByID($event["client"]->resourceId);
+                if ($player instanceof Player) {
+                    $player->setMovementKeys($event["request"]["content"]);
+                    Server::$positionsChanged = true;
+                }
                 return null;
                 break;
             }
             case "P_REQUEST_PLAYER" : {
                 echo sprintf("MessageRouter::incoming :     P_REQUEST_PLAYER with `" . json_encode($event["request"]["content"], true) . "`\n");
-                if (Server::getPlayerByID($event["request"]["content"]) instanceof Player) {
-                    $player = Server::getPlayerByID($event["request"]["content"]);
+                $player = Server::getPlayerByID($event["request"]["content"]);
+                if ($player instanceof Player) {
                     return array(
                         "respondTo"=>"sender",
                         "response"=>array(

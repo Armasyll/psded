@@ -34,7 +34,12 @@ class Server {
         self::$players[$conn->resourceId] = $player;
     }
     public static function getPlayerByID($id) {
-        return self::$players[$id];
+        if (array_key_exists($id, self::$players)) {
+            return self::$players[$id];
+        }
+        else {
+            return null;
+        }
     }
     public static function getClientByUUID($uuid) {
     	if (array_key_exists($uuid, self::$uuidClient)) {
@@ -108,7 +113,6 @@ class Server {
         foreach (self::$players as $player) {
             $arr[] = $player->getLocRotScale();
         }
-        error_log("Server : broadcastPlayerLocRotScales");
         self::broadcast(json_encode(array("type"=>"S_UPDATE_LOCROTSCALES_PLAYERS","content"=>$arr), true));
     }
     public static function getClients() {
