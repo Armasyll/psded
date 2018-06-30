@@ -77,6 +77,7 @@ class Server {
         unset(self::$players[$conn->resourceId]);
         unset($player);
         unset(self::$clients[$conn->resourceId]);
+        self::broadcast(json_encode(array("type"=>"S_DESTROY_PLAYER","content"=>$uuid)));
     }
     public static function sendMessage(ConnectionInterface $conn, $msg = "") {
         if ($conn instanceof ConnectionInterface) {
@@ -102,12 +103,13 @@ class Server {
             self::sendMessage($client, $msg);
         }
     }
-    public static function broadcastPlayerLocRots() {
+    public static function broadcastPlayerLocRotScales() {
         $arr = array();
         foreach (self::$players as $player) {
-            $arr[] = $player->getLocRot();
+            $arr[] = $player->getLocRotScale();
         }
-        self::broadcast(json_encode(array("type"=>"S_UPDATE_LOCROTS_PLAYERS","content"=>$arr), true));
+        error_log("Server : broadcastPlayerLocRotScales");
+        self::broadcast(json_encode(array("type"=>"S_UPDATE_LOCROTSCALES_PLAYERS","content"=>$arr), true));
     }
     public static function getClients() {
         return self::$clients;

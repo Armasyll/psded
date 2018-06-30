@@ -21,7 +21,7 @@ $server = new IoServer(
 
 $loop->addPeriodicTimer(0.03, function () {
 	if (PSDE\Server::$positionsChanged) {
-	    PSDE\Server::broadcastPlayerLocRots();
+	    PSDE\Server::broadcastPlayerLocRotScales();
 	    PSDE\Server::$positionsChanged = false;
 	}
 });

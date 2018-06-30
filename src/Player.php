@@ -11,14 +11,7 @@ class Player {
 	private $position = array("x"=>0.000000000000000,"y"=>0.000000000000000,"z"=>0.000000000000000);
 	private $rotation = array("x"=>0.000000000000000,"y"=>0.000000000000000,"z"=>0.000000000000000);
 	private $scaling = array("x"=>1.000000000000000,"y"=>1.000000000000000,"z"=>1.000000000000000);
-    private $moveForward = false;
-    private $moveBackward = false;
-    private $runForward = false;
-    private $strafeRight = false;
-    private $strafeLeft = false;
-    private $turnRight = false;
-    private $turnLeft = false;
-    private $jump = false;
+    private $movementKeys = array("forward"=>false,"shift"=>false,"backward"=>false,"turnLeft"=>false,"turnRight"=>false,"strafeLeft"=>false,"strafeRight"=>false,"jump"=>false);
 
 	public function __construct($id, $networkID, $mesh = "foxSkeletonN", $position = array("x"=>0,"y"=>0,"z"=>0), $rotation = array("x"=>0,"y"=>0,"z"=>0), $scaling = array("x"=>0,"y"=>0,"z"=>0)) {
 		echo sprintf("Creating new Player (%s, %s, %s, %s, %s)\n", $id, $mesh, json_encode($position, true), json_encode($rotation, true), json_encode($scaling, true));
@@ -47,6 +40,10 @@ class Player {
 				$this->mesh = "foxM";
 				break;
 			}
+			case "foxF" : {
+				$this->mesh = "foxF";
+				break;
+			}
 			case "foxSkeletonM" : {
 				$this->mesh = "foxSkeletonM";
 				break;
@@ -55,6 +52,10 @@ class Player {
 				$this->mesh = "foxSkeletonN";
 				break;
 			}
+            case "nullSkeletonN" : {
+                $this->mesh = "nullSkeletonN";
+                break;
+            }
 			default : {
 				$this->mesh = "foxSkeletonN";
 			}
@@ -102,29 +103,15 @@ class Player {
 	public function getScaling() {
 		return $this->scaling;
 	}
-	public function setMovementStatus($moveForward, $moveBackward, $runForward, $strafeRight, $strafeLeft, $turnRight, $turnLeft, $jump) {
-		$this->moveForward = $moveForward;
-		$this->moveBackward = $moveBackward;
-		$this->runForward = $runForward;
-		$this->strafeRight = $strafeRight;
-		$this->strafeLeft = $strafeLeft;
-		$this->turnRight = $turnRight;
-		$this->turnLeft = $turnLeft;
-		$this->jump = $jump;
+	public function setMovementKeys($movementKeys) {
+		$this->movementKeys = $movementKeys;
 	}
 	public function getLocRot() {
 		return array(
 			$this->nid,
 			$this->position,
 			$this->rotation,
-			$this->moveForward,
-			$this->moveBackward,
-			$this->runForward,
-			$this->strafeRight,
-			$this->strafeLeft,
-			$this->turnRight,
-			$this->turnLeft,
-			$this->jump
+			$this->movementKeys
 		);
 	}
 	public function getLocRotScale() {
@@ -133,14 +120,7 @@ class Player {
 			$this->position,
 			$this->rotation,
 			$this->scaling,
-			$this->moveForward,
-			$this->moveBackward,
-			$this->runForward,
-			$this->strafeRight,
-			$this->strafeLeft,
-			$this->turnRight,
-			$this->turnLeft,
-			$this->jump
+			$this->movementKeys
 		);
 	}
 	public function getAll() {
@@ -152,14 +132,7 @@ class Player {
 			$this->position,
 			$this->rotation,
 			$this->scaling,
-			$this->moveForward,
-			$this->moveBackward,
-			$this->runForward,
-			$this->strafeRight,
-			$this->strafeLeft,
-			$this->turnRight,
-			$this->turnLeft,
-			$this->jump
+			$this->movementKeys
 		);
 	}
 }
