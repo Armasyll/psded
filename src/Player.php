@@ -179,7 +179,14 @@ class Player {
 		return $this->movementKeys;
 	}
 	public function setMovementKeys($movementKeys) {
-		$this->movementKeys = $movementKeys;
+		$this->movementKeys["forward"] = $movementKeys["forward"] === true;
+		$this->movementKeys["shift"] = $movementKeys["shift"] === true;
+		$this->movementKeys["backward"] = $movementKeys["backward"] === true;
+		$this->movementKeys["turnRight"] = $movementKeys["turnRight"] === true;
+		$this->movementKeys["turnLeft"] = $movementKeys["turnLeft"] === true;
+		$this->movementKeys["strafeRight"] = $movementKeys["strafeRight"] === true;
+		$this->movementKeys["strafeLeft"] = $movementKeys["strafeLeft"] === true;
+		$this->movementKeys["jump"] = $movementKeys["jump"] === true;
 	}
 	public function getLocRot() {
 		return array(
