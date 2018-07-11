@@ -36,18 +36,23 @@ class MessageRouter {
             }
             case "P_CHAT_MESSAGE" : {
                 echo sprintf("MessageRouter::incoming :     P_PUBLIC_CHAT_MESSAGE with `" . json_encode($event["request"]["content"], true) . "`\n");
-                return array(
-                    "respondTo"=>"all",
-                    "response"=>array(
-                        "type"=>"S_PUBLIC_CHAT_MESSAGE",
-                        "content"=>array(
-                            "time"=>$time,
-                            "from"=>Server::getUUIDByClientID($event["client"]->resourceId),
-                            "to"=>"all",
-                            "message"=>Utils::sanitizeString($event["request"]["content"])
+                if (mb_substr($event["request"]["content"], 0, 1) == '/') {
+                    Server::handleChatMessageEvent($event);
+                }
+                else {
+                    return array(
+                        "respondTo"=>"all",
+                        "response"=>array(
+                            "type"=>"S_CHAT_MESSAGE",
+                            "content"=>array(
+                                "time"=>$time,
+                                "from"=>Server::getUUIDByClientID($event["client"]->resourceId),
+                                "to"=>"all",
+                                "message"=>Utils::sanitizeString($event["request"]["content"])
+                            )
                         )
-                    )
-                );
+                    );
+                }
                 break;
             }
             case "P_INIT_SELF" : {
@@ -55,7 +60,14 @@ class MessageRouter {
                 $player = new Player(
                     $event["request"]["content"]["id"],
                     $event["client"]->resourceId,
+                    $event["request"]["content"]["name"],
+                    $event["request"]["content"]["age"],
+                    $event["request"]["content"]["sex"],
+                    $event["request"]["content"]["species"],
                     $event["request"]["content"]["mesh"],
+                    $event["request"]["content"]["skin"]
+                );
+                $player->setLocRotScale(
                     $event["request"]["content"]["position"],
                     $event["request"]["content"]["rotation"],
                     $event["request"]["content"]["scaling"]

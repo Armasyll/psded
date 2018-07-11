@@ -121,4 +121,7 @@ class Server {
     public static function getPlayers() {
         return self::$players;
     }
+    public static function handleChatMessageEvent($message) {
+
+    }
 }
