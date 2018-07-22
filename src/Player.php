@@ -111,18 +111,10 @@ class Player {
 				$this->mesh = "foxF";
 				break;
 			}
-			case "foxSkeletonM" : {
-				$this->mesh = "foxSkeletonM";
-				break;
-			}
 			case "foxSkeletonN" : {
 				$this->mesh = "foxSkeletonN";
 				break;
 			}
-            case "nullSkeletonN" : {
-                $this->mesh = "nullSkeletonN";
-                break;
-            }
 			default : {
 				$this->mesh = "foxSkeletonN";
 			}

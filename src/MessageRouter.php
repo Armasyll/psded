@@ -67,12 +67,12 @@ class MessageRouter {
                     $event["request"]["content"]["mesh"],
                     $event["request"]["content"]["skin"]
                 );
-                $player->setLocRotScale(
-                    $event["request"]["content"]["position"],
-                    $event["request"]["content"]["rotation"],
-                    $event["request"]["content"]["scaling"]
-                );
                 if ($player instanceof Player) {
+                    $player->setLocRotScale(
+                        $event["request"]["content"]["position"],
+                        $event["request"]["content"]["rotation"],
+                        $event["request"]["content"]["scaling"]
+                    );
                     $player->setMovementKeys($event["request"]["content"]["movementKeys"]);
                     Server::setClientPlayer($event["client"], $player);
                     Server::$positionsChanged = true;
