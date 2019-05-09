@@ -2,9 +2,7 @@
 ### Really just a testbed for another javascript game server thing I've been writing.  
   
 ## Covering my ass  
-  
-**NOTE: These documents may contain sexually oriented adult material intended for individuals 18 years of age or older.**  
-  
+
 No money is made from this game, yo.  
   
 ## Requirements  
