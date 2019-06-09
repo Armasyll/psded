@@ -9,23 +9,23 @@ class Player {
 	private $name = "";
 	private $age = 18;
 	private $sex = 0;
-	private $species = "fox";
-	private $skin = null;
-	private $mesh = null;
+	private $species = 0;
+	private $meshID = null;
+	private $materialID = null;
 	private $position = array("x"=>0.000000000000000,"y"=>0.000000000000000,"z"=>0.000000000000000);
 	private $rotation = array("x"=>0.000000000000000,"y"=>0.000000000000000,"z"=>0.000000000000000);
 	private $scaling = array("x"=>1.000000000000000,"y"=>1.000000000000000,"z"=>1.000000000000000);
     private $movementKeys = array("forward"=>false,"shift"=>false,"backward"=>false,"turnLeft"=>false,"turnRight"=>false,"strafeLeft"=>false,"strafeRight"=>false,"jump"=>false);
 
-	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $species = "fox", $mesh = null, $skin = null) {
+	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $species = 0, $meshID = "foxSkeletonN", $materialID = "bone01") {
 		$this->setID($id);
 		$this->setNetworkID($networkID);
 		$this->setName($name);
 		$this->setAge($age);
 		$this->setSex($sex);
 		$this->setSpecies($species);
-		$this->setSkin($skin);
-		$this->setMesh($mesh);
+		$this->setMeshID($meshID);
+		$this->setMaterialID($materialID);
 	}
 	public function setID($id) {
 		$this->id = $id;
@@ -55,73 +55,54 @@ class Player {
 	}
 	public function setSex($int) {
 		if (is_int($int)) {
-			if ($int == 1) {
-				$this->sex = 1;
+			if ($int == 2) {
+				$this->sex = 2;
 			}
 			else {
-				$this->sex = 0;
+				$this->sex = 1;
 			}
 		}
 		else {
 			if (strtolower(mb_substr($int, 0, 1)) == "f") {
-				$this->sex = 1;
+				$this->sex = 2;
 			}
 			else {
-				$this->sex = 0;
+				$this->sex = 1;
 			}
 		}
 	}
 	public function getSex() {
 		return $this->sex;
 	}
-	public function setSpecies($string) {
-		$string = strtolower(preg_replace('/\W+/', "", $string));
-		switch ($string) {
-			case "fox" : {
-				$string = "fox";
-			}
-			default : {
-				$string = "fox";
-			}
-		}
-		$this->species = $string;
+	public function setSpecies($number) {
+		$this->species = $number;
 	}
 	public function getSpecies() {
 		return $this->species;
 	}
-	public function setSkin($string) {
+	public function setMeshID($string = "foxSkeletonN") {
 		$string = preg_replace('/^[\W\-\s\,\/\.]+/', "", $string);
 		if (!empty($string)) {
-			$this->skin = $string;
+			$this->meshID = $string;
+		}
+		else {
+			$this->meshID = "foxSkeletonN";
 		}
 	}
-	public function getSkin() {
-		return $this->skin;
+	public function getMeshID() {
+		return $this->meshID;
 	}
-	public function setMesh($mesh = null) {
-		if ($mesh == null) {
-			$mesh = $this->species . ucfirst($this->sex);
+	public function setMaterialID($string = "bone01") {
+		$string = preg_replace('/^[\W\-\s\,\/\.]+/', "", $string);
+		if (!empty($string)) {
+			$this->materialID = $string;
 		}
-		switch ($mesh) {
-			case "foxM" : {
-				$this->mesh = "foxM";
-				break;
-			}
-			case "foxF" : {
-				$this->mesh = "foxF";
-				break;
-			}
-			case "foxSkeletonN" : {
-				$this->mesh = "foxSkeletonN";
-				break;
-			}
-			default : {
-				$this->mesh = "foxSkeletonN";
-			}
+		else {
+			$this->meshID = "bone01";
 		}
 	}
-	public function getMesh() {
-		return $this->mesh;
+	public function getMaterialID() {
+		return $this->materialID;
 	}
 	public function setPosition($x = 0, $y = 0, $z = 0) {
 		if (array_key_exists("x", $x) && array_key_exists("y", $x) && array_key_exists("z", $x)) {
@@ -205,8 +186,8 @@ class Player {
 			"age"=>$this->age,
 			"sex"=>$this->sex,
 			"species"=>$this->species,
-			"skin"=>$this->skin,
-			"mesh"=>$this->mesh,
+			"meshID"=>$this->mesh,
+			"materialID"=>$this->materialID,
 			"position"=>$this->position,
 			"rotation"=>$this->rotation,
 			"scaling"=>$this->scaling,

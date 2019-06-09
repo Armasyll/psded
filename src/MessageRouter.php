@@ -64,8 +64,8 @@ class MessageRouter {
                     $event["request"]["content"]["age"],
                     $event["request"]["content"]["sex"],
                     $event["request"]["content"]["species"],
-                    $event["request"]["content"]["mesh"],
-                    $event["request"]["content"]["skin"]
+                    $event["request"]["content"]["meshID"],
+                    $event["request"]["content"]["materialID"]
                 );
                 if ($player instanceof Player) {
                     $player->setLocRotScale(
