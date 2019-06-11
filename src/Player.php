@@ -10,11 +10,11 @@ class Player {
 	private $age = 18;
 	private $sex = 0;
 	private $species = 0;
-	private $meshID = null;
-	private $materialID = null;
-	private $position = array("x"=>0.000000000000000,"y"=>0.000000000000000,"z"=>0.000000000000000);
-	private $rotation = array("x"=>0.000000000000000,"y"=>0.000000000000000,"z"=>0.000000000000000);
-	private $scaling = array("x"=>1.000000000000000,"y"=>1.000000000000000,"z"=>1.000000000000000);
+	private $meshID = "skeletonN";
+	private $materialID = "bone01";
+	private $position = array("x"=>0.0, "y"=>0.0, "z"=>0.0);
+	private $rotation = array("x"=>0.0, "y"=>0.0, "z"=>0.0);
+	private $scaling = array("x"=>1.0, "y"=>1.0, "z"=>1.0);
     private $movementKeys = array("forward"=>false,"shift"=>false,"backward"=>false,"turnLeft"=>false,"turnRight"=>false,"strafeLeft"=>false,"strafeRight"=>false,"jump"=>false);
 
 	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $species = 0, $meshID = "foxSkeletonN", $materialID = "bone01") {
@@ -104,46 +104,37 @@ class Player {
 	public function getMaterialID() {
 		return $this->materialID;
 	}
-	public function setPosition($x = 0, $y = 0, $z = 0) {
-		if (array_key_exists("x", $x) && array_key_exists("y", $x) && array_key_exists("z", $x)) {
-			$this->position = $x;
-		}
-		else {
-			$this->position["x"] = $x;
-			$this->position["y"] = $y;
-			$this->position["z"] = $z;
+	public function setPosition($position = array(0, 0, 0)) {
+		if (is_array($position) && count($position) == 3) {
+			$this->position = $position;
 		}
 	}
 	public function getPosition() {
 		return $this->position;
 	}
-	public function setRotation($x = 0, $y = 0, $z = 0) {
-		if (array_key_exists("x", $x) && array_key_exists("y", $x) && array_key_exists("z", $x)) {
-			$this->rotation = $x;
+	public function setRotation($rotation) {
+		if (is_array($rotation) && count($rotation) == 3) {
+			$this->rotation = $rotation;
 		}
-		else {
-			$this->rotation["x"] = $x;
-			$this->rotation["y"] = $y;
-			$this->rotation["z"] = $z;
+		else if (is_int($rotation)) {
+			$this->rotation = array("x"=>$rotation, "y"=>$rotation, "z"=>$rotation);
 		}
 	}
 	public function getRotation() {
 		return $this->rotation;
 	}
-	public function setScaling($x = 1, $y = 1, $z = 1) {
-		if (array_key_exists("x", $x) && array_key_exists("y", $x) && array_key_exists("z", $x)) {
-			$this->scaling = $x;
+	public function setScaling($scaling = array("x"=>1.0, "y"=>1.0, "z"=>1.0)) {
+		if (is_array($scaling) && count($scaling) == 3) {
+			$this->scaling = $scaling;
 		}
-		else {
-			$this->scaling["x"] = $x;
-			$this->scaling["y"] = $y;
-			$this->scaling["z"] = $z;
+		else if (is_int($scaling)) {
+			$this->scaling = array("x"=>$scaling, "y"=>$scaling, "z"=>$scaling);
 		}
 	}
 	public function getScaling() {
 		return $this->scaling;
 	}
-	public function setLocRotScale($position = array("x"=>0,"y"=>0,"z"=>0), $rotation = array("x"=>0,"y"=>0,"z"=>0), $scaling = array("x"=>0,"y"=>0,"z"=>0)) {
+	public function setLocRotScale($position = array("x"=>0.0, "y"=>0.0, "z"=>0.0), $rotation = array("x"=>0.0, "y"=>0.0, "z"=>0.0), $scaling = array("x"=>1.0, "y"=>1.0, "z"=>1.0)) {
 		$this->setPosition($position);
 		$this->setRotation($rotation);
 		$this->setScaling($scaling);
@@ -179,19 +170,6 @@ class Player {
 		);
 	}
 	public function getAll() {
-		return array(
-			"id"=>$this->id,
-			"nid"=>$this->nid,
-			"name"=>$this->name,
-			"age"=>$this->age,
-			"sex"=>$this->sex,
-			"species"=>$this->species,
-			"meshID"=>$this->mesh,
-			"materialID"=>$this->materialID,
-			"position"=>$this->position,
-			"rotation"=>$this->rotation,
-			"scaling"=>$this->scaling,
-			"movementKeys"=>$this->movementKeys
-		);
+		return array($this->nid,$this->id,$this->name,$this->age,$this->sex,$this->species,$this->meshID,$this->materialID,$this->position,$this->rotation,$this->scaling,$this->movementKeys);
 	}
 }

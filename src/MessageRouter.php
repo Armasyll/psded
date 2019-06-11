@@ -56,24 +56,25 @@ class MessageRouter {
                 break;
             }
             case "P_INIT_SELF" : {
-                echo sprintf("MessageRouter::incoming :     P_INIT_SELF with `" . json_encode($event["request"]["content"], true) . "`\n");
+                echo sprintf("MessageRouter::incoming :     P_INIT_SELF with `" . json_encode($event["request"]["content"][0], true) . "`\n");
                 $player = new Player(
-                    $event["request"]["content"]["id"],
+                    $event["request"]["content"][0],
                     $event["client"]->resourceId,
-                    $event["request"]["content"]["name"],
-                    $event["request"]["content"]["age"],
-                    $event["request"]["content"]["sex"],
-                    $event["request"]["content"]["species"],
-                    $event["request"]["content"]["meshID"],
-                    $event["request"]["content"]["materialID"]
+                    $event["request"]["content"][1],
+                    $event["request"]["content"][2],
+                    $event["request"]["content"][3],
+                    $event["request"]["content"][4],
+                    $event["request"]["content"][5],
+                    $event["request"]["content"][6]
                 );
                 if ($player instanceof Player) {
+                    echo sprintf("    Player created successfully.");
                     $player->setLocRotScale(
-                        $event["request"]["content"]["position"],
-                        $event["request"]["content"]["rotation"],
-                        $event["request"]["content"]["scaling"]
+                        array($event["request"]["content"][7]),
+                        array($event["request"]["content"][8]),
+                        array($event["request"]["content"][9])
                     );
-                    $player->setMovementKeys($event["request"]["content"]["movementKeys"]);
+                    $player->setMovementKeys($event["request"]["content"][10]);
                     Server::setClientPlayer($event["client"], $player);
                     Server::$positionsChanged = true;
                     return array(
