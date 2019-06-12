@@ -2,30 +2,38 @@
 namespace PSDE;
 
 use PSDE\Utils;
+use PSDE\Enum;
+use PSDE\Enum\Sex;
+use PSDE\Enum\Species;
+use PSDE\Vector2;
+use PSDE\Vector3;
 
-class Player {
+class PlayerEntity {
 	private $id = "";
 	private $nid = "";
 	private $name = "";
 	private $age = 18;
-	private $sex = 0;
-	private $species = 0;
+	private $sex = Sex::NONE;
+	private $species = Species::FOXSKELETON;
 	private $meshID = "skeletonN";
 	private $materialID = "bone01";
-	private $position = array("x"=>0.0, "y"=>0.0, "z"=>0.0);
-	private $rotation = array("x"=>0.0, "y"=>0.0, "z"=>0.0);
-	private $scaling = array("x"=>1.0, "y"=>1.0, "z"=>1.0);
+	private $position = null;
+	private $rotation = null;
+	private $scaling = null;
     private $movementKeys = array("forward"=>false,"shift"=>false,"backward"=>false,"turnLeft"=>false,"turnRight"=>false,"strafeLeft"=>false,"strafeRight"=>false,"jump"=>false);
 
-	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $species = 0, $meshID = "foxSkeletonN", $materialID = "bone01") {
-		$this->setID($id);
-		$this->setNetworkID($networkID);
+	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $species = 0, $meshID = "foxSkeletonN", $materialID = "bone01", $position = null, $rotation = null, $scaling = null) {
+		$this->setID($id); // UUID
+		$this->setNetworkID($networkID); // ConnectionInstance->resourceId
 		$this->setName($name);
 		$this->setAge($age);
 		$this->setSex($sex);
 		$this->setSpecies($species);
 		$this->setMeshID($meshID);
 		$this->setMaterialID($materialID);
+		$this->setPosition($position);
+		$this->setRotation($rotation);
+		$this->setScaling($scaling);
 	}
 	public function setID($id) {
 		$this->id = $id;
@@ -104,40 +112,53 @@ class Player {
 	public function getMaterialID() {
 		return $this->materialID;
 	}
-	public function setPosition($position = array(0, 0, 0)) {
-		if (is_array($position) && count($position) == 3) {
-			$this->position = $position;
+	public function setPosition($position) {
+		if ($position instanceof Vector3) {
+			$this->position.copyFrom($position);
 		}
+		else if (is_array($position) && count($position) == 3) {
+			$this->position = Vector3::FromArray($position);
+		}
+		return $this;
 	}
 	public function getPosition() {
 		return $this->position;
 	}
 	public function setRotation($rotation) {
-		if (is_array($rotation) && count($rotation) == 3) {
-			$this->rotation = $rotation;
+		if ($rotation instanceof Vector3) {
+			$this->rotation.copyFrom($rotation);
+		}
+		else if (is_array($rotation) && count($rotation) == 3) {
+			$this->rotation = Vector3::FromArray($rotation);
 		}
 		else if (is_int($rotation)) {
-			$this->rotation = array("x"=>$rotation, "y"=>$rotation, "z"=>$rotation);
+			$this->rotation->y = $rotation;
 		}
+		return $this;
 	}
 	public function getRotation() {
 		return $this->rotation;
 	}
-	public function setScaling($scaling = array("x"=>1.0, "y"=>1.0, "z"=>1.0)) {
-		if (is_array($scaling) && count($scaling) == 3) {
-			$this->scaling = $scaling;
+	public function setScaling($scaling) {
+		if ($scaling instanceof Vector3) {
+			$this->scaling.copyFrom($scaling);
+		}
+		else if (is_array($scaling) && count($scaling) == 3) {
+			$this->scaling = Vector3::FromArray($scaling);
 		}
 		else if (is_int($scaling)) {
-			$this->scaling = array("x"=>$scaling, "y"=>$scaling, "z"=>$scaling);
+			$this->scaling.set($scaling, $scaling, $scaling);
 		}
+		return $this;
 	}
 	public function getScaling() {
 		return $this->scaling;
 	}
-	public function setLocRotScale($position = array("x"=>0.0, "y"=>0.0, "z"=>0.0), $rotation = array("x"=>0.0, "y"=>0.0, "z"=>0.0), $scaling = array("x"=>1.0, "y"=>1.0, "z"=>1.0)) {
+	public function setLocRotScale($position, $rotation, $scaling) {
 		$this->setPosition($position);
 		$this->setRotation($rotation);
 		$this->setScaling($scaling);
+		return $this;
 	}
 	public function getMovementKeys() {
 		return $this->movementKeys;
@@ -155,21 +176,34 @@ class Player {
 	public function getLocRot() {
 		return array(
 			$this->nid,
-			$this->position,
-			$this->rotation,
+			$this->position->asArray(),
+			$this->rotation->asArray(),
 			$this->movementKeys
 		);
 	}
 	public function getLocRotScale() {
 		return array(
 			$this->nid,
-			$this->position,
-			$this->rotation,
-			$this->scaling,
+			$this->position->asArray(),
+			$this->rotation->asArray(),
+			$this->scaling->asArray(),
 			$this->movementKeys
 		);
 	}
 	public function getAll() {
-		return array($this->nid,$this->id,$this->name,$this->age,$this->sex,$this->species,$this->meshID,$this->materialID,$this->position,$this->rotation,$this->scaling,$this->movementKeys);
+		return array(
+			$this->nid,
+			$this->id,
+			$this->name,
+			$this->age,
+			$this->sex,
+			$this->species,
+			$this->meshID,
+			$this->materialID,
+			$this->position->asArray(),
+			$this->rotation->asArray(),
+			$this->scaling->asArray(),
+			$this->movementKeys
+		);
 	}
 }

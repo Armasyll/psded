@@ -41,7 +41,7 @@ class MessageListener implements MessageComponentInterface {
     }
 
     public function onMessage(ConnectionInterface $conn, $msg = "") {
-        //echo sprintf("\nMessageListener::onMessage : Connection %d (%s) sending message `%s`\n", $conn->resourceId, Server::getUUIDByClientID($conn->resourceId), $msg);
+        //echo sprintf("\nMessageListener::onMessage : Connection %d (%s) sending message `%s`\n", $conn->resourceId, Server::getUUIDByID($conn->resourceId), $msg);
         $msg = (array) json_decode(html_entity_decode($msg), true);
         if (!isset($msg["type"])) {
             echo sprintf("MessageListener::onMessage :     Client %d attempt to send an invalid message.\n", $conn->resourceId);
@@ -55,7 +55,7 @@ class MessageListener implements MessageComponentInterface {
         $response["response"] = json_encode($response["response"], true);
 
         if ($response["respondTo"] == "sender") {
-            echo sprintf("MessageListener::onMessage :     Sending message `%s` back to client %d (%s)\n", $response["response"], $conn->resourceId, Server::getUUIDByClientID($conn->resourceId));
+            echo sprintf("MessageListener::onMessage :     Sending message `%s` back to client %d (%s)\n", $response["response"], $conn->resourceId, Server::getUUIDByID($conn->resourceId));
             Server::sendMessage($conn, $response["response"]);
         }
         else if ($response["respondTo"] == "receiver") {

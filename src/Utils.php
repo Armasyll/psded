@@ -2,6 +2,7 @@
 namespace PSDE;
 
 class Utils {
+    public const EPSILON = 0.3926991;
     public static function sanitizeString($string) {
         return htmlentities($string);
     }
