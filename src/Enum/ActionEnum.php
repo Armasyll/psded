@@ -3,7 +3,7 @@ namespace PSDE\Enum;
 
 use PSDE\Enum;
 
-abstract class Action extends Enum {
+abstract class ActionEnum extends Enum {
     const NONE = 0;
     const LAY = 1;
     const SIT = 2;

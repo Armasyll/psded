@@ -3,10 +3,10 @@ namespace PSDE\Enum;
 
 use PSDE\Enum;
 
-abstract class Entity extends Enum {
+abstract class EntityEnum extends Enum {
     const NONE = 0;
     const ABSTRACT = 1;
-    const ENTIY = 2;
+    const ENTITY = 2;
     const CHARACTER = 3;
     const ITEM = 4;
     const FURNITURE = 5;

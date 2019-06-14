@@ -4,8 +4,8 @@ namespace PSDE;
 use PSDE\MessageListener;
 use PSDE\Utils;
 use PSDE\Enum;
-use PSDE\Enum\Action;
-use PSDE\Enum\Entity;
+use PSDE\Enum\ActionEnum;
+use PSDE\Enum\EntityEnum;
 use PSDE\Game;
 
 class MessageRouter {
@@ -146,22 +146,18 @@ class MessageRouter {
             }
             case "P_REQUEST_ENTITY_ACTION" : {
                 echo sprintf("MessageRouter::incoming :     P_REQUEST_ENTITY_ACTION with `" . json_encode($event["request"]["content"], true) . "`\n");
-                if ($event["request"]["content"][0] == Entity::CHARACTER && Server::hasUUID($event["request"]["content"][1])) {
+                if ($event["request"]["content"][0] == EntityEnum::CHARACTER && Server::hasUUID($event["request"]["content"][1])) {
                     $entity = Server::getPlayerByUUID($event["request"]["content"][1]);
                 }
                 else {
                     $entity = null;
                 }
-                if ($event["request"]["content"][2] == Entity::CHARACTER && Server::hasUUID($event["request"]["content"][3])) {
+                if ($event["request"]["content"][2] == EntityEnum::CHARACTER && Server::hasUUID($event["request"]["content"][3])) {
                     $subEntity = Server::getPlayerByUUID($event["request"]["content"][3]);
                 }
                 else {
                     echo "\tSubEntity does not exist.";
                     return 2;
-                }
-                $damage = 0;
-                if ($event["request"]["content"][4] == Action::ATTACK && $entity instanceof PlayerEntity) {
-                    $damage = Game::calculateDamage($entity, $subEntity);
                 }
                 $content = array(
                     $event["request"]["content"][0],
@@ -170,6 +166,9 @@ class MessageRouter {
                     $event["request"]["content"][3],
                     $event["request"]["content"][4]
                 );
+                if ($event["request"]["content"][4] == ActionEnum::ATTACK && $entity instanceof PlayerEntity) {
+                    array_push($content, Game::calculateDamage($entity, $subEntity));
+                }
                 return array(
                     "respondTo"=>"all",
                     "response"=>array(

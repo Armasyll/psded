@@ -3,28 +3,25 @@ namespace PSDE;
 
 use PSDE\Utils;
 use PSDE\Enum;
+use PSDE\Enum\EntityEnum;
 use PSDE\Enum\Sex;
 use PSDE\Enum\Species;
 use PSDE\Vector2;
 use PSDE\Vector3;
+use PSDE\AbstractEntity;
+use PSDE\Entity;
 
-class PlayerEntity {
-	private $id = "";
-	private $nid = "";
-	private $name = "";
-	private $age = 18;
-	private $sex = Sex::NONE;
-	private $species = Species::FOXSKELETON;
-	private $meshID = "skeletonN";
-	private $materialID = "bone01";
-	private $position = null;
-	private $rotation = null;
-	private $scaling = null;
-    private $movementKeys = array("forward"=>false,"shift"=>false,"backward"=>false,"turnLeft"=>false,"turnRight"=>false,"strafeLeft"=>false,"strafeRight"=>false,"jump"=>false);
+class PlayerEntity extends Entity {
+    protected $name = "";
+	protected $age = 18;
+	protected $sex = Sex::NONE;
+	protected $species = Species::FOXSKELETON;
+	protected $height = 1.2;
+    protected $movementKeys = array("forward"=>false,"shift"=>false,"backward"=>false,"turnLeft"=>false,"turnRight"=>false,"strafeLeft"=>false,"strafeRight"=>false,"jump"=>false);
 
 	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $species = 0, $meshID = "foxSkeletonN", $materialID = "bone01", $position = null, $rotation = null, $scaling = null) {
-		$this->setID($id); // UUID
-		$this->setNetworkID($networkID); // ConnectionInstance->resourceId
+		parent::__construct($id, $networkID);
+		$this->entityType = EntityEnum::CHARACTER;
 		$this->setName($name);
 		$this->setAge($age);
 		$this->setSex($sex);
@@ -34,18 +31,6 @@ class PlayerEntity {
 		$this->setPosition($position);
 		$this->setRotation($rotation);
 		$this->setScaling($scaling);
-	}
-	public function setID($id) {
-		$this->id = $id;
-	}
-	public function getID() {
-		return $this->id;
-	}
-	public function setNetworkID($id) {
-		$this->nid = $id;
-	}
-	public function getNetworkID() {
-		return $this->nid;
 	}
 	public function setName($string) {
 		$this->name = preg_replace('/^[\W\-\s\,]+/', "", $string);
@@ -88,77 +73,11 @@ class PlayerEntity {
 	public function getSpecies() {
 		return $this->species;
 	}
-	public function setMeshID($string = "foxSkeletonN") {
-		$string = preg_replace('/^[\W\-\s\,\/\.]+/', "", $string);
-		if (!empty($string)) {
-			$this->meshID = $string;
-		}
-		else {
-			$this->meshID = "foxSkeletonN";
-		}
+	public function setHeight($number) {
+		$this->height = $number;
 	}
-	public function getMeshID() {
-		return $this->meshID;
-	}
-	public function setMaterialID($string = "bone01") {
-		$string = preg_replace('/^[\W\-\s\,\/\.]+/', "", $string);
-		if (!empty($string)) {
-			$this->materialID = $string;
-		}
-		else {
-			$this->meshID = "bone01";
-		}
-	}
-	public function getMaterialID() {
-		return $this->materialID;
-	}
-	public function setPosition($position) {
-		if ($position instanceof Vector3) {
-			$this->position.copyFrom($position);
-		}
-		else if (is_array($position) && count($position) == 3) {
-			$this->position = Vector3::FromArray($position);
-		}
-		return $this;
-	}
-	public function getPosition() {
-		return $this->position;
-	}
-	public function setRotation($rotation) {
-		if ($rotation instanceof Vector3) {
-			$this->rotation.copyFrom($rotation);
-		}
-		else if (is_array($rotation) && count($rotation) == 3) {
-			$this->rotation = Vector3::FromArray($rotation);
-		}
-		else if (is_int($rotation)) {
-			$this->rotation->y = $rotation;
-		}
-		return $this;
-	}
-	public function getRotation() {
-		return $this->rotation;
-	}
-	public function setScaling($scaling) {
-		if ($scaling instanceof Vector3) {
-			$this->scaling.copyFrom($scaling);
-		}
-		else if (is_array($scaling) && count($scaling) == 3) {
-			$this->scaling = Vector3::FromArray($scaling);
-		}
-		else if (is_int($scaling)) {
-			$this->scaling.set($scaling, $scaling, $scaling);
-		}
-		return $this;
-	}
-	public function getScaling() {
-		return $this->scaling;
-	}
-	public function setLocRotScale($position, $rotation, $scaling) {
-		$this->setPosition($position);
-		$this->setRotation($rotation);
-		$this->setScaling($scaling);
-		return $this;
+	public function getHeight() {
+		return $this->height;
 	}
 	public function getMovementKeys() {
 		return $this->movementKeys;
@@ -205,5 +124,8 @@ class PlayerEntity {
 			$this->scaling->asArray(),
 			$this->movementKeys
 		);
+	}
+	public function getArmourClass() {
+		return 0;
 	}
 }

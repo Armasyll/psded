@@ -3,7 +3,7 @@ namespace PSDE\Enum;
 
 use PSDE\Enum;
 
-abstract class Damage extends Enum {
+abstract class DamageEnum extends Enum {
     const NONE = 0;
     const ACID = 1;
     const BLUDGEONING = 2;

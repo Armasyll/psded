@@ -3,7 +3,8 @@ namespace PSDE;
 
 use PSDE\Utils;
 use PSDE\Enum;
-use PSDE\Enum\Damage;
+use PSDE\Enum\DamageEnum;
+use PSDE\Enum\EntityEnum;
 use PSDE\Player;
 use PSDE\Vector2;
 use PSDE\Vector3;
@@ -52,38 +53,48 @@ class Game {
         return 1.0;
     }
 
-    static function withinRange($entityA, $entityB) {
-
+    static function withinRange($entityA, $entityB, $distance = 0.6) {
+        if ($distance <= 0) {
+            $distance = $entityA.getHeight();
+            if ($entityB.getHeight() > $distance) {
+                $distance = $entityB.getHeight();
+            }
+            $distance = $distance * 0.75; // assuming arm length is half of the body length, idk
+        }
+        return $entityA->getPosition()->equalsWithEpsilon($entityB->getPosition(), $distance);
     }
     static function inFrontOf($entityA, $entityB, $epsilon = Utils::EPSILON) {
-
+        $rotV = new Vector2(cos($entityA->getRotation()->y), sin($entityA->getRotation()->y));
+        $radFace = acos((($rotV->y * ($entityB->getPosition()->z - $entityA->getPosition()->z)) + ($rotV->x * ($entityB->getPosition()->x - $entityA->getPosition()->x))) / sqrt(pow($entityB->getPosition()->z - $entityA->getPosition()->z, 2) + pow($entityB->getPosition()->x - $entityA->getPosition()->x, 2))) - 1;
+        return ($epsilon/2 >= $radFace);
     }
     static function calculateDamage($defender, $attacker) {
         $didHit = false;
         $attackRoll = Game::roll(1, 20);
         if (Game::withinRange($attacker, $defender) && Game::inFrontOf($attacker, $defender)) {
-            $didHit = $attackRoll > $defender.getArmourClass();
+            $didHit = $attackRoll > $defender->getArmourClass();
         }
-        if (didHit) {
-            $damageRollCount = 1;
+        if ($didHit) {
+            return 1;
+            /*$damageRollCount = 1;
             $damageRoll = 0;
-            $damageType = Damage::BLUDGEONING;
-            $unarmed = false;
-            if ($attacker.isRightHanded() && $attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
-                $damageRollCount = $attacker.getEquipment()["HAND_R"].getDamageRollCount();
-                $damageRoll = $attacker.getEquipment()["HAND_R"].getDamageRoll();
-                $damageType = $attacker.getEquipment()["HAND_R"].getDamageType();
+            $damageType = DamageEnum::BLUDGEONING;
+            $unarmed = true;
+            if ($attacker->isRightHanded() && $attacker->getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
+                $damageRollCount = $attacker->getEquipment()["HAND_R"].getDamageRollCount();
+                $damageRoll = $attacker->getEquipment()["HAND_R"].getDamageRoll();
+                $damageType = $attacker->getEquipment()["HAND_R"].getDamageType();
             }
-            else if ($attacker.isLeftHanded() && $attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
-                $damageRollCount = $attacker.getEquipment()["HAND_L"].getDamageRollCount();
-                $damageRoll = $attacker.getEquipment()["HAND_L"].getDamageRoll();
-                $damageType = $attacker.getEquipment()["HAND_L"].getDamageType();
+            else if ($attacker->isLeftHanded() && $attacker->getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
+                $damageRollCount = $attacker->getEquipment()["HAND_L"].getDamageRollCount();
+                $damageRoll = $attacker->getEquipment()["HAND_L"].getDamageRoll();
+                $damageType = $attacker->getEquipment()["HAND_L"].getDamageType();
             }
             else {
                 $unarmed = true;
             }
             if ($unarmed) {
-                $damageRoll = 1 + Game::calculateAbilityModifier($attacker.getStrength());
+                $damageRoll = 1 + Game::calculateAbilityModifier($attacker->getStrength());
                 if ($damageRoll < 0) {
                     $damageRoll = 0;
                 }
@@ -91,7 +102,7 @@ class Game {
             }
             else {
                 return Game::roll($damageRollCount, $damageRoll);
-            }
+            }*/
         }
         return 0;
     }
