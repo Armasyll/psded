@@ -17,7 +17,7 @@ class PlayerEntity extends Entity {
 	protected $sex = Sex::NONE;
 	protected $species = Species::FOXSKELETON;
 	protected $height = 1.2;
-    protected $movementKeys = array("forward"=>false,"shift"=>false,"backward"=>false,"turnLeft"=>false,"turnRight"=>false,"strafeLeft"=>false,"strafeRight"=>false,"jump"=>false);
+    protected $movementKeys = 0x0;
 
 	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $species = 0, $meshID = "foxSkeletonN", $materialID = "bone01", $position = null, $rotation = null, $scaling = null) {
 		parent::__construct($id, $networkID);
@@ -83,14 +83,7 @@ class PlayerEntity extends Entity {
 		return $this->movementKeys;
 	}
 	public function setMovementKeys($movementKeys) {
-		$this->movementKeys["forward"] = $movementKeys["forward"] === true;
-		$this->movementKeys["shift"] = $movementKeys["shift"] === true;
-		$this->movementKeys["backward"] = $movementKeys["backward"] === true;
-		$this->movementKeys["turnRight"] = $movementKeys["turnRight"] === true;
-		$this->movementKeys["turnLeft"] = $movementKeys["turnLeft"] === true;
-		$this->movementKeys["strafeRight"] = $movementKeys["strafeRight"] === true;
-		$this->movementKeys["strafeLeft"] = $movementKeys["strafeLeft"] === true;
-		$this->movementKeys["jump"] = $movementKeys["jump"] === true;
+		$this->movementKeys = $movementKeys;
 	}
 	public function getLocRot() {
 		return array(

@@ -65,7 +65,7 @@ class Game {
     }
     static function inFrontOf($entityA, $entityB, $epsilon = Utils::EPSILON) {
         $rotV = new Vector2(cos($entityA->getRotation()->y), sin($entityA->getRotation()->y));
-        $radFace = acos((($rotV->y * ($entityB->getPosition()->z - $entityA->getPosition()->z)) + ($rotV->x * ($entityB->getPosition()->x - $entityA->getPosition()->x))) / sqrt(pow($entityB->getPosition()->z - $entityA->getPosition()->z, 2) + pow($entityB->getPosition()->x - $entityA->getPosition()->x, 2))) - 1;
+        $radFace = acos((($rotV->y * ($entityB->getPosition()->z - $entityA->getPosition()->z)) + ($rotV->x * ($entityB->getPosition()->x - $entityA->getPosition()->x))) / sqrt(pow($entityB->getPosition()->z - $entityA->getPosition()->z, 2) + pow($entityB->getPosition()->x - $entityA->getPosition()->x, 2))) - 1.5708;
         return ($epsilon/2 >= $radFace);
     }
     static function calculateDamage($defender, $attacker) {
