@@ -5,7 +5,8 @@ use PSDE\Utils;
 use PSDE\Enum;
 use PSDE\Enum\EntityEnum;
 use PSDE\Enum\Sex;
-use PSDE\Enum\Species;
+use PSDE\Enum\CreatureTypeEnum;
+use PSDE\Enum\CreatureSubTypeEnum;
 use PSDE\Vector2;
 use PSDE\Vector3;
 use PSDE\AbstractEntity;
@@ -15,17 +16,19 @@ class PlayerEntity extends Entity {
     protected $name = "";
 	protected $age = 18;
 	protected $sex = Sex::NONE;
-	protected $species = Species::FOXSKELETON;
+	protected $creatureType = CreatureType::HUMANOID;
+	protected $creatureSubType = CreatureSubType::FOX;
 	protected $height = 1.2;
     protected $movementKeys = 0x0;
 
-	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $species = 0, $meshID = "foxSkeletonN", $materialID = "bone01", $position = null, $rotation = null, $scaling = null) {
+	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $creatureType = 0, $creatureSubType = 0, $meshID = "foxSkeletonN", $materialID = "bone01", $position = null, $rotation = null, $scaling = null) {
 		parent::__construct($id, $networkID);
 		$this->entityType = EntityEnum::CHARACTER;
 		$this->setName($name);
 		$this->setAge($age);
 		$this->setSex($sex);
-		$this->setSpecies($species);
+		$this->setCreatureType($creatureType);
+		$this->setCreatureSubType($creatureSubType);
 		$this->setMeshID($meshID);
 		$this->setMaterialID($materialID);
 		$this->setPosition($position);
@@ -67,11 +70,17 @@ class PlayerEntity extends Entity {
 	public function getSex() {
 		return $this->sex;
 	}
-	public function setSpecies($number) {
-		$this->species = $number;
+	public function setCreatureType($number) {
+		$this->creatureType = $number;
 	}
-	public function getSpecies() {
-		return $this->species;
+	public function getCreatureType() {
+		return $this->creatureType;
+	}
+	public function setCreatureSubType($number) {
+		$this->creatureSubType = $number;
+	}
+	public function getCreatureSubType() {
+		return $this->creatureSubType;
 	}
 	public function setHeight($number) {
 		$this->height = $number;
@@ -109,7 +118,8 @@ class PlayerEntity extends Entity {
 			$this->name,
 			$this->age,
 			$this->sex,
-			$this->species,
+			$this->creatureType,
+			$this->creatureSubType,
 			$this->meshID,
 			$this->materialID,
 			$this->position->asArray(),
