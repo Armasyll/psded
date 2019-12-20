@@ -14,21 +14,21 @@ use PSDE\Entity;
 
 class PlayerEntity extends Entity {
     protected $name = "";
-	protected $age = 18;
-	protected $sex = Sex::NONE;
 	protected $creatureType = CreatureType::HUMANOID;
 	protected $creatureSubType = CreatureSubType::FOX;
+    protected $sex = Sex::NONE;
+    protected $age = 18;
 	protected $height = 1.2;
     protected $movementKeys = 0x0;
 
-	public function __construct($id, $networkID, $name = "", $age = 18, $sex = 0, $creatureType = 0, $creatureSubType = 0, $meshID = "foxSkeletonN", $materialID = "bone01", $position = null, $rotation = null, $scaling = null) {
+	public function __construct($id, $networkID, $name = "", $creatureType = 0, $creatureSubType = 0, $sex = 0, $age = 18, $meshID = "foxSkeletonN", $materialID = "bone01", $position = null, $rotation = null, $scaling = null) {
 		parent::__construct($id, $networkID);
 		$this->entityType = EntityEnum::CHARACTER;
 		$this->setName($name);
-		$this->setAge($age);
-		$this->setSex($sex);
 		$this->setCreatureType($creatureType);
 		$this->setCreatureSubType($creatureSubType);
+        $this->setSex($sex);
+        $this->setAge($age);
 		$this->setMeshID($meshID);
 		$this->setMaterialID($materialID);
 		$this->setPosition($position);
@@ -116,10 +116,10 @@ class PlayerEntity extends Entity {
 			$this->nid,
 			$this->id,
 			$this->name,
-			$this->age,
-			$this->sex,
 			$this->creatureType,
 			$this->creatureSubType,
+            $this->sex,
+            $this->age,
 			$this->meshID,
 			$this->materialID,
 			$this->position->asArray(),
