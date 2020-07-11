@@ -9,8 +9,9 @@ use PSDE\Enum\CreatureTypeEnum;
 use PSDE\Enum\CreatureSubTypeEnum;
 use PSDE\Vector2;
 use PSDE\Vector3;
-use PSDE\AbstractEntity;
-use PSDE\Entity;
+use PSDE\Entity\AbstractEntity;
+use PSDE\Entity\Entity;
+use PSDE\Entity\SoulEntity;
 
 class PlayerEntity extends Entity {
     protected $name = "";
@@ -35,55 +36,46 @@ class PlayerEntity extends Entity {
 		$this->setRotation($rotation);
 		$this->setScaling($scaling);
 	}
-	public function setName($string) {
-		$this->name = preg_replace('/^[\W\-\s\,]+/', "", $string);
-	}
-	public function getName() {
-		return $this->name;
-	}
 	public function setAge($int) {
 		if (is_int($int)) {
 			$this->age = $int;
 		}
+        return 0;
 	}
 	public function getAge() {
 		return $this->age;
 	}
 	public function setSex($int) {
-		if (is_int($int)) {
-			if ($int == 2) {
-				$this->sex = 2;
-			}
-			else {
-				$this->sex = 1;
-			}
+		if (Sex.hasKey($int)) {
+			$int = Sex.getValue($int);
 		}
+		else if (Sex.hasValue($int)) {}
 		else {
-			if (strtolower(mb_substr($int, 0, 1)) == "f") {
-				$this->sex = 2;
-			}
-			else {
-				$this->sex = 1;
-			}
+			return 1;
 		}
+		$this->sex = $int;
+        return 0;
 	}
 	public function getSex() {
 		return $this->sex;
 	}
 	public function setCreatureType($number) {
 		$this->creatureType = $number;
+        return 0;
 	}
 	public function getCreatureType() {
 		return $this->creatureType;
 	}
 	public function setCreatureSubType($number) {
 		$this->creatureSubType = $number;
+        return 0;
 	}
 	public function getCreatureSubType() {
 		return $this->creatureSubType;
 	}
 	public function setHeight($number) {
 		$this->height = $number;
+        return 0;
 	}
 	public function getHeight() {
 		return $this->height;
@@ -93,6 +85,7 @@ class PlayerEntity extends Entity {
 	}
 	public function setMovementKeys($movementKeys) {
 		$this->movementKeys = $movementKeys;
+        return 0;
 	}
 	public function getLocRot() {
 		return array(

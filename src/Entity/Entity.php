@@ -30,6 +30,7 @@ class Entity extends AbstractEntity {
 		else {
 			$this->meshID = "foxSkeletonN";
 		}
+        return 0;
 	}
 	public function getMeshID() {
 		return $this->meshID;
@@ -42,6 +43,7 @@ class Entity extends AbstractEntity {
 		else {
 			$this->meshID = "bone01";
 		}
+        return 0;
 	}
 	public function getMaterialID() {
 		return $this->materialID;

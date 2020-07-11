@@ -5,7 +5,7 @@ use PSDE\Utils;
 use PSDE\Enum;
 use PSDE\Enum\DamageEnum;
 use PSDE\Enum\EntityEnum;
-use PSDE\Player;
+use PSDE\Entity\PlayerEntity;
 use PSDE\Vector2;
 use PSDE\Vector3;
 
