@@ -92,6 +92,26 @@ class Server {
         self::broadcast(json_encode(array("type"=>"S_DESTROY_PLAYER","content"=>$uuid)));
         return null;
     }
+    public static function postMessage(ClientInterface $fromClient, int $respondTo, $toClient = null, string $command, int $status = 0, $message = null) {
+        $blob = array("cmd"=>$command, "sta"=>$status);
+        if ($message != null) {
+            $blob["msg"] = $message;
+        }
+        switch ($respondTo) {
+            case RespondTo.RECEIVER: {
+                $toClient->send(json_encode($blob, true));
+            }
+            case RespondTo.SENDER: {
+                $fromClient->send(json_encode($blob, true));
+                break;
+            }
+            case RespondTo.ALL: {
+                self::broadcast(json_encode($blob, true));
+                break;
+            }
+        }
+        return 0;
+    }
     public static function sendMessage(ConnectionInterface $conn, $msg = "") {
         if ($conn instanceof ConnectionInterface) {
             $conn->send($msg);
@@ -101,20 +121,20 @@ class Server {
                 self::sendMessage($conn[$i], $msg);
             }
         }
-        return null;
+        return 0;
     }
     public static function sendAcceptConnection(ConnectionInterface $conn) {
         self::sendMessage($conn, json_encode(array(
             "type"=>"S_ACCEPT_CONNECTION",
             "content"=>$conn->resourceId
         ), true));
-        return null;
+        return 0;
     }
     public static function broadcast($msg = "") {
         foreach (self::$clients as $client) {
             self::sendMessage($client, $msg);
         }
-        return null;
+        return 0;
     }
     public static function broadcastPlayerLocRotScales() {
         $arr = array();
@@ -122,7 +142,7 @@ class Server {
             $arr[] = $player->getLocRotScale();
         }
         self::broadcast(json_encode(array("type"=>"S_UPDATE_LOCROTSCALES_PLAYERS","content"=>$arr), true));
-        return null;
+        return 0;
     }
     public static function getClients() {
         return self::$clients;

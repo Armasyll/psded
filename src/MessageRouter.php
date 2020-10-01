@@ -6,180 +6,154 @@ use PSDE\Utils;
 use PSDE\Enum;
 use PSDE\Enum\ActionEnum;
 use PSDE\Enum\EntityEnum;
+use PSDE\Enum\RespondTo;
 use PSDE\Game;
 
 class MessageRouter {
     public static function incoming($event) {
         $time = time();
-        switch ($event["request"]["type"]) {
+        if (!isset($event["client"])) {
+            return 2;
+        }
+        $client = $event["client"];
+        if (!isset($event["message"]["cmd"])) {
+            return 2;
+        }
+        $command = $event["message"]["cmd"];
+        if (isset($event["message"]["sta"])) {
+            $status = $event["message"]["sta"];
+        }
+        else {
+            $status = 0;
+        }
+        if (isset($event["message"]["msg"])) {
+            $message = $event["message"]["msg"];
+        }
+        else {
+            $message = null;
+        }
+        if (isset($event["message"]["callbackID"])) {
+            $callbackID = $event["message"]["callbackID"];
+        }
+        else {
+            $callbackID = "";
+        }
+        switch ($command) {
             case "P_REQUEST_JOIN_SERVER" : {
-                echo sprintf("MessageRouter::incoming :     P_REQUEST_JOIN_SERVER with `" . json_encode($event["request"]["content"], true) . "`\n");
-                return array(
-                    "respondTo"=>"sender",
-                    "response"=>array(
-                        "type"=>"S_ACCEPT_JOIN_SERVER",
-                        "content"=>Utils::genUUIDv4()
-                    )
-                );
+                echo sprintf("MessageRouter::incoming :     P_REQUEST_JOIN_SERVER with `" . json_encode($message, true) . "`\n");
+                Server::postMessage($client, RespondTo.SENDER, null, "S_ACCEPT_JOIN_SERVER", 0, array(Utils::genUUIDv4()));
                 break;
             }
             case "P_REQUEST_UUID" : {
-                echo sprintf("MessageRouter::incoming :     P_REQUEST_UUID with `" . json_encode($event["request"]["content"], true) . "`\n");
-                Server::setClientUUID($event["client"], $event["request"]["content"]);
-                return array(
-                    "respondTo"=>"sender",
-                    "response"=>array(
-                        "type"=>"S_ACCEPT_UUID",
-                        "content"=>array(
-                            "uuid"=>$event["request"]["content"],
-                            "nid"=>$event["client"]->resourceId
-                        )
-                    )
-                );
+                echo sprintf("MessageRouter::incoming :     P_REQUEST_UUID with `" . json_encode($message, true) . "`\n");
+                Server::setClientUUID($client, $message);
+                Server::postMessage($client, RespondTo.SENDER, null, "S_ACCEPT_UUID", 0, array("uuid"=>$message, "nid"=>$client->resourceId));
                 break;
             }
             case "P_CHAT_MESSAGE" : {
-                echo sprintf("MessageRouter::incoming :     P_PUBLIC_CHAT_MESSAGE with `" . json_encode($event["request"]["content"], true) . "`\n");
-                if (mb_substr($event["request"]["content"], 0, 1) == '/') {
+                echo sprintf("MessageRouter::incoming :     P_PUBLIC_CHAT_MESSAGE with `" . json_encode($message, true) . "`\n");
+                if (mb_substr($message, 0, 1) == '/') {
                     Server::handleChatMessageEvent($event);
                 }
                 else {
-                    return array(
-                        "respondTo"=>"all",
-                        "response"=>array(
-                            "type"=>"S_CHAT_MESSAGE",
-                            "content"=>array(
-                                "time"=>$time,
-                                "from"=>Server::getUUIDByID($event["client"]->resourceId),
-                                "to"=>"all",
-                                "message"=>Utils::sanitizeString($event["request"]["content"])
-                            )
-                        )
-                    );
+                    Server::postMessage($client, RespondTo.ALL, null, "S_CHAT_MESSAGE", 0, array("time"=>$time, "from"=>Server::getUUIDByID($client->resourceId), "to"=>"all", "message"=>Utils::sanitizeString($message)));
                 }
                 break;
             }
             case "P_INIT_SELF" : {
-                echo sprintf("MessageRouter::incoming :     P_INIT_SELF with `" . json_encode($event["request"]["content"], true) . "`\n");
+                echo sprintf("MessageRouter::incoming :     P_INIT_SELF with `" . json_encode($message, true) . "`\n");
                 $player = new PlayerEntity(
-                    $event["request"]["content"][0],
-                    $event["client"]->resourceId,
-                    $event["request"]["content"][1],
-                    $event["request"]["content"][2],
-                    $event["request"]["content"][3],
-                    $event["request"]["content"][4],
-                    $event["request"]["content"][5],
-                    $event["request"]["content"][6],
-                    $event["request"]["content"][7],
-                    $event["request"]["content"][8],
-                    $event["request"]["content"][9]
+                    $message[0],
+                    $client->resourceId,
+                    $message[1],
+                    $message[2],
+                    $message[3],
+                    $message[4],
+                    $message[5],
+                    $message[6],
+                    $message[7],
+                    $message[8],
+                    $message[9]
                 );
                 if ($player instanceof PlayerEntity) {
                     echo sprintf("    PlayerEntity created successfully.");
-                    $player->setMovementKeys($event["request"]["content"][10]);
-                    Server::setClientPlayer($event["client"], $player);
+                    $player->setMovementKeys($message[10]);
+                    Server::setClientPlayer($client, $player);
                     Server::$positionsChanged = true;
-                    return array(
-                        "respondTo"=>"sender",
-                        "response"=>array(
-                            "type"=>"S_ACCEPT_INIT_SELF",
-                            "content"=>$player
-                        )
-                    );
+                    Server::postMessage($client, RespondTo.SENDER, null, "S_ACCEPT_INIT_SELF", 0, $player);
                 }
-                return null;
                 break;
             }
             case "P_UPDATE_LOCROTSCALE_SELF" : {
-                //echo sprintf("MessageRouter::incoming :     P_UPDATE_PLAYER_LOCROT with `" . json_encode($event["request"]["content"], true) . "`\n");
-                $player = Server::getPlayerByID($event["client"]->resourceId);
+                //echo sprintf("MessageRouter::incoming :     P_UPDATE_PLAYER_LOCROT with `" . json_encode($message, true) . "`\n");
+                $player = Server::getPlayerByID($client->resourceId);
                 if ($player instanceof PlayerEntity) {
-                    $player->setPosition($event["request"]["content"][0]);
-                    $player->setRotation($event["request"]["content"][1]);
-                    $player->setScaling($event["request"]["content"][2]);
-                    $player->setMovementKeys($event["request"]["content"][3]);
+                    $player->setPosition($message[0]);
+                    $player->setRotation($message[1]);
+                    $player->setScaling($message[2]);
+                    $player->setMovementKeys($message[3]);
                     Server::$positionsChanged = true;
                 }
-                return null;
                 break;
             }
             case "P_UPDATE_MOVEMENTKEYS_SELF" : {
-                //echo sprintf("MessageRouter::incoming :     P_UPDATE_MOVEMENTKEYS_SELF with `" . json_encode($event["request"]["content"], true) . "`\n");
-                $player = Server::getPlayerByID($event["client"]->resourceId);
+                //echo sprintf("MessageRouter::incoming :     P_UPDATE_MOVEMENTKEYS_SELF with `" . json_encode($message, true) . "`\n");
+                $player = Server::getPlayerByID($client->resourceId);
                 if ($player instanceof PlayerEntity) {
-                    $player->setMovementKeys($event["request"]["content"]);
+                    $player->setMovementKeys($message);
                     Server::$positionsChanged = true;
                 }
-                return null;
                 break;
             }
             case "P_REQUEST_PLAYER" : {
-                echo sprintf("MessageRouter::incoming :     P_REQUEST_PLAYER with `" . json_encode($event["request"]["content"], true) . "`\n");
-                $player = Server::getPlayerByID($event["request"]["content"]);
+                echo sprintf("MessageRouter::incoming :     P_REQUEST_PLAYER with `" . json_encode($message, true) . "`\n");
+                $player = Server::getPlayerByID($message);
                 if ($player instanceof PlayerEntity) {
-                    return array(
-                        "respondTo"=>"sender",
-                        "response"=>array(
-                            "type"=>"S_SEND_PLAYER",
-                            "content"=>$player->getAll()
-                        )
-                    );
+                    Server::postMessage($client, RespondTo.SENDER, null, "S_SEND_PLAYER", 0, $player->getAll());
                 }
                 break;
             }
             case "P_REQUEST_ALL_PLAYERS" : {
-                echo sprintf("MessageRouter::incoming :     P_REQUEST_ALL_PLAYERS with `" . json_encode($event["request"]["content"], true) . "`\n");
+                echo sprintf("MessageRouter::incoming :     P_REQUEST_ALL_PLAYERS with `" . json_encode($message, true) . "`\n");
                 $players = [];
                 foreach (Server::getPlayers() as $player) {
-                    if ($player->getNetworkID() != $event["client"]->resourceId) {
+                    if ($player->getNetworkID() != $client->resourceId) {
                         $players[] = $player->getAll();
                     }
                 }
-                return array(
-                    "respondTo"=>"sender",
-                    "response"=>array(
-                        "type"=>"S_SEND_ALL_PLAYERS",
-                        "content"=>$players
-                    )
-                );
+                Server::postMessage($client, RespondTo.SENDER, null, "S_SEND_ALL_PLAYERS", 0, $players);
                 break;
             }
             case "P_REQUEST_ENTITY_ACTION" : {
-                echo sprintf("MessageRouter::incoming :     P_REQUEST_ENTITY_ACTION with `" . json_encode($event["request"]["content"], true) . "`\n");
-                if ($event["request"]["content"][0] == EntityEnum::CHARACTER && Server::hasUUID($event["request"]["content"][1])) {
-                    $entity = Server::getPlayerByUUID($event["request"]["content"][1]);
+                echo sprintf("MessageRouter::incoming :     P_REQUEST_ENTITY_ACTION with `" . json_encode($message, true) . "`\n");
+                if ($message[0] == EntityEnum::CHARACTER && Server::hasUUID($message[1])) {
+                    $entity = Server::getPlayerByUUID($message[1]);
                 }
                 else {
                     $entity = null;
                 }
-                if ($event["request"]["content"][2] == EntityEnum::CHARACTER && Server::hasUUID($event["request"]["content"][3])) {
-                    $subEntity = Server::getPlayerByUUID($event["request"]["content"][3]);
+                if ($message[2] == EntityEnum::CHARACTER && Server::hasUUID($message[3])) {
+                    $subEntity = Server::getPlayerByUUID($message[3]);
                 }
                 else {
                     echo "\tSubEntity does not exist.";
                     return 2;
                 }
                 $content = array(
-                    $event["request"]["content"][0],
-                    $event["request"]["content"][1],
-                    $event["request"]["content"][2],
-                    $event["request"]["content"][3],
-                    $event["request"]["content"][4]
+                    $message[0],
+                    $message[1],
+                    $message[2],
+                    $message[3],
+                    $message[4]
                 );
-                if ($event["request"]["content"][4] == ActionEnum::ATTACK && $entity instanceof PlayerEntity) {
+                if ($message[4] == ActionEnum::ATTACK && $entity instanceof PlayerEntity) {
                     array_push($content, Game::calculateDamage($entity, $subEntity));
                 }
-                return array(
-                    "respondTo"=>"all",
-                    "response"=>array(
-                        "type"=>"S_DO_ENTITY_ACTION",
-                        "content"=>$content
-                    )
-                );
+                Server::postMessage($client, RespondTo.ALL, null, "S_DO_ENTITY_ACTION", 0, $content);
             }
             default : {
-                echo sprintf("MessageRouter::incoming :     NOTHING with `" . json_encode($event["request"]["content"], true) . "`\n");
-                return null;
+                echo sprintf("MessageRouter::incoming :     NOTHING with `" . json_encode($message, true) . "`\n");
+                return 2;
             }
         }
     }
