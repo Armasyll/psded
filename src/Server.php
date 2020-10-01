@@ -7,6 +7,8 @@ use Ratchet\ConnectionInterface;
 use PSDE\NetworkController;
 use PSDE\MessageRouter;
 use PSDE\Utils;
+use PSDE\Enum;
+use PSDE\Enum\RespondTo;
 
 /*
     ID is ConnectionInterface->resourceId
